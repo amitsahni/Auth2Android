@@ -36,3 +36,10 @@ AuthManager.with(this)
 ```aidl
 boolean isAuth = AuthManager.get().checkAuthState(this);
 ```
+
+##### Add following in defaultConfig in gradle
+```groovy
+manifestPlaceholders = [
+                'appAuthRedirectScheme': 'redirectUri'
+        ]
+```
