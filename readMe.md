@@ -17,9 +17,6 @@ Intent intent = AuthManager.with(MainActivity.this)
                 case 100:
                     AuthManager.with(this)
                             .handleAuth(data);
-                    AuthManager.with(this)
-                            .profile()
-                            .build();
                     break;
             }
         }
@@ -33,4 +30,9 @@ AuthManager.with(this)
            .profile()
            .listener(callback)
            .build();
+```
+
+#### Check Login Status
+```aidl
+boolean isAuth = AuthManager.get().checkAuthState(this);
 ```
