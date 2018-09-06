@@ -1,5 +1,6 @@
 package com.auth;
 
+import android.app.Application;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,6 +9,9 @@ import android.text.TextUtils;
 import net.openid.appauth.AuthState;
 
 import org.json.JSONException;
+
+import webconnect.com.webconnect.ApiConfiguration;
+import webconnect.com.webconnect.WebConnect;
 
 /**
  * Created by clickapps on 28/2/18.
@@ -23,6 +27,7 @@ public class AuthManager {
             synchronized (AuthManager.class) {
                 if (sAuthManager == null) {
                     sAuthManager = new AuthManager();
+
                 }
             }
         }
@@ -30,6 +35,8 @@ public class AuthManager {
     }
 
     public static Builder with(@NonNull Context context) {
+      //  if (!ApiConfiguration.isDebug())
+            new ApiConfiguration.Builder((Application) context.getApplicationContext()).debug(true).config();
         return new Builder(context);
     }
 

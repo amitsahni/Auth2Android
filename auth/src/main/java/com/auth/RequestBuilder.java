@@ -34,21 +34,26 @@ public class RequestBuilder {
             this.param = param;
         }
 
+        public Login scope(String... scope) {
+            param.scope = scope;
+            return this;
+        }
+
         public Intent getAuthIntent() {
             AuthorizationServiceConfiguration serviceConfiguration = new AuthorizationServiceConfiguration(
-                    Uri.parse("https://accounts.google.com/o/oauth2/v2/auth") /* auth endpoint */,
-                    Uri.parse("https://www.googleapis.com/oauth2/v4/token") /* token endpoint */
+                    Uri.parse(param.authEndPoint) /* auth endpoint */,
+                    Uri.parse(param.tokenEndPoint) /* token endpoint */
             );
             AuthorizationService authorizationService = new AuthorizationService(param.context);
             String clientId = param.clientId;
-            Uri redirectUri = Uri.parse(param.redirectUri + ":/oauth2callback");
+            Uri redirectUri = Uri.parse(param.redirectUri + "://oauth2callback");
             AuthorizationRequest.Builder builder = new AuthorizationRequest.Builder(
                     serviceConfiguration,
                     clientId,
                     ResponseTypeValues.CODE,
                     redirectUri
             );
-            builder.setScopes("address", "email", "profile", "phone");
+            builder.setScopes(param.scope);
             AuthorizationRequest request = builder.build();
             return authorizationService.getAuthorizationRequestIntent(request);
         }
@@ -112,9 +117,9 @@ public class RequestBuilder {
                     public void execute(@Nullable String s, @Nullable String s1, @Nullable AuthorizationException e) {
                         Map<String, String> map = new LinkedHashMap<>();
                         map.put("Authorization", String.format("Bearer %s", s));
-                        WebConnect.with(param.context, "userinfo")
+                        WebConnect.with(param.context, "")
                                 .get()
-                                .baseUrl("https://www.googleapis.com/oauth2/v3/")
+                                .baseUrl(param.url)
                                 .headerParam(map)
                                 .callback(new OnWebCallback() {
                                     @Override

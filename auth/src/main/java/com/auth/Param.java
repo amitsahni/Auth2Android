@@ -10,4 +10,8 @@ public class Param {
     Context context;
     String clientId;
     String redirectUri;
+    String authEndPoint;
+    String tokenEndPoint;
+    String[] scope;
+    String url;
 }
