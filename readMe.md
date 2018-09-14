@@ -1,4 +1,4 @@
-Login
+#### Google Login
 
 ```aidl
 @Depricated
@@ -6,14 +6,20 @@ Intent intent = AuthManager.with(MainActivity.this)
                         .login(clientId, redictUri);
 startActivityForResult(intent, 100);
 ```
-`Google Login`
+
+
 ```aidl
 Intent intent = AuthManager.with(MainActivity.this)
                         .loginGoogle(clientId, redictUri);
 startActivityForResult(intent, 100);
 ```
 
-`Custom Login`
+========================================================================
+
+
+
+#### Custom Login
+
 ```aidl
 Intent intent = AuthManager.with(MainActivity.this)
                         .loginCustom(clientId,
@@ -23,6 +29,9 @@ Intent intent = AuthManager.with(MainActivity.this)
                                 new String[]{"scope1", "scope2"});
 startActivityForResult(intent, 100);
 ```
+
+========================================================================
+
 
 #### OnActivityResult
 
@@ -61,6 +70,7 @@ startActivityForResult(intent, 100);
     }
 
 ```
+========================================================================
 
 #### Profile
 ```aidl
@@ -77,7 +87,9 @@ AuthManager.with(this)
            .profileGoogle()
            .build();
 ```
+========================================================================
 
+#### Custom Profile
 
 ```aidl
 AuthManager.with(MainActivity.this)
@@ -91,6 +103,7 @@ AuthManager.with(MainActivity.this)
            .build();
            }
 ```
+========================================================================
 
 #### Check Login Status
 ```aidl
