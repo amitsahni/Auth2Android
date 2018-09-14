@@ -23,10 +23,10 @@ public class MainActivity extends AppCompatActivity {
 //                startActivityForResult(intent, 100);
 
                 Intent intent = AuthManager.with(MainActivity.this)
-                        .loginCustom("af1cc8b0-b739-47ac-8939-8d9a0285a0d3", "sample.auth2android",
+                        .loginCustom("9b1b5aa5-6a99-4478-888f-1fb4431d9026", "sample.auth2android",
                                 "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
                                 "https://login.microsoftonline.com/common/oauth2/v2.0/token",
-                                new String[]{"openid", "email", "profile", "offline_access"});
+                                new String[]{"openid", "email", "profile"});
                 startActivityForResult(intent, 100);
             }
         });
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     AuthManager.with(this)
-                            .profileCustom("https://graph.microsoft.com/v1.0/me/")
+                            .profileCustom("https://outlook.office.com/api/v2.0/me/")
                             .build();
                     break;
             }
