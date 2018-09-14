@@ -46,7 +46,11 @@ public class Builder {
     }
 
     public void handleAuth(@NonNull Intent intent) {
-        new RequestBuilder.Login(param).handleAuth(intent);
+        new RequestBuilder.Login(param).handleAuth(intent, null);
+    }
+
+    public void handleAuth(@NonNull Intent intent, @NonNull AuthListener authListener) {
+        new RequestBuilder.Login(param).handleAuth(intent, authListener);
     }
 
     public void logout() {
@@ -63,8 +67,8 @@ public class Builder {
         return new RequestBuilder.UserInfo(param);
     }
 
-    public RequestBuilder.UserInfo profileCustom(@NonNull String url) {
+    public RequestBuilder.CustomInfo profileCustom(@NonNull String url) {
         param.url = url;
-        return new RequestBuilder.UserInfo(param);
+        return new RequestBuilder.CustomInfo(param);
     }
 }

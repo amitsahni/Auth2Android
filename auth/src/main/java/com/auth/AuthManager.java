@@ -35,8 +35,6 @@ public class AuthManager {
     }
 
     public static Builder with(@NonNull Context context) {
-      //  if (!ApiConfiguration.isDebug())
-            new ApiConfiguration.Builder((Application) context.getApplicationContext()).debug(true).config();
         return new Builder(context);
     }
 
