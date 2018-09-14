@@ -23,10 +23,11 @@ public class MainActivity extends AppCompatActivity {
 //                startActivityForResult(intent, 100);
 
                 Intent intent = AuthManager.with(MainActivity.this)
-                        .loginCustom("9b1b5aa5-6a99-4478-888f-1fb4431d9026", "sample.auth2android",
+                        .loginCustom("ea9c87a5-2dfd-4e10-911c-f3058ce831d0",
+                                "sample.auth2android",
                                 "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
                                 "https://login.microsoftonline.com/common/oauth2/v2.0/token",
-                                new String[]{"openid", "email", "profile"});
+                                new String[]{"openid", "email", "profile", "https://outlook.office.com/contacts.read"});
                 startActivityForResult(intent, 100);
             }
         });

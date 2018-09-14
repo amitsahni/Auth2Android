@@ -138,7 +138,7 @@ public class RequestBuilder {
                                             callback.profile(new User());
                                         }
                                     }
-                                }, User.class, Object.class)
+                                }, Object.class, Object.class)
                                 .connect();
 
                     }
