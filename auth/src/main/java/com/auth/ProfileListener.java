@@ -5,5 +5,5 @@ package com.auth;
  */
 
 public interface ProfileListener {
-    void profile(User user);
+    void profile(Object user);
 }

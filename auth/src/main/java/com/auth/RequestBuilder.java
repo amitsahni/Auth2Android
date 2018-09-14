@@ -34,26 +34,31 @@ public class RequestBuilder {
             this.param = param;
         }
 
+        public Login scope(String... scope) {
+            param.scope = scope;
+            return this;
+        }
+
         public Intent getAuthIntent() {
             AuthorizationServiceConfiguration serviceConfiguration = new AuthorizationServiceConfiguration(
-                    Uri.parse("https://accounts.google.com/o/oauth2/v2/auth") /* auth endpoint */,
-                    Uri.parse("https://www.googleapis.com/oauth2/v4/token") /* token endpoint */
+                    Uri.parse(param.authEndPoint) /* auth endpoint */,
+                    Uri.parse(param.tokenEndPoint) /* token endpoint */
             );
             AuthorizationService authorizationService = new AuthorizationService(param.context);
             String clientId = param.clientId;
-            Uri redirectUri = Uri.parse(param.redirectUri + ":/oauth2callback");
+            Uri redirectUri = Uri.parse(param.redirectUri);
             AuthorizationRequest.Builder builder = new AuthorizationRequest.Builder(
                     serviceConfiguration,
                     clientId,
                     ResponseTypeValues.CODE,
                     redirectUri
             );
-            builder.setScopes("address", "email", "profile", "phone");
+            builder.setScopes(param.scope);
             AuthorizationRequest request = builder.build();
             return authorizationService.getAuthorizationRequestIntent(request);
         }
 
-        public void handleAuth(Intent intent) {
+        public void handleAuth(Intent intent, final AuthListener authListener) {
             AuthorizationResponse response = AuthorizationResponse.fromIntent(intent);
             AuthorizationException error = AuthorizationException.fromIntent(intent);
             final AuthState authState = new AuthState(response, error);
@@ -65,9 +70,16 @@ public class RequestBuilder {
                         if (tokenResponse != null) {
                             authState.update(tokenResponse, exception);
                             Log.i(getClass().getName(), String.format("Token Response [ Access Token: %s, ID Token: %s ]", tokenResponse.accessToken, tokenResponse.idToken));
+                            if (authListener != null) {
+                                authListener.onTokenRequestCompleted(tokenResponse.accessToken, tokenResponse.idToken);
+                            }
                             param.context.getSharedPreferences(AuthManager.SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit()
                                     .putString(AuthManager.AUTH_STATE, authState.jsonSerializeString())
                                     .apply();
+                        } else {
+                            if (authListener != null) {
+                                authListener.onTokenRequestCompleted(null, null);
+                            }
                         }
                     }
                 });
@@ -112,9 +124,9 @@ public class RequestBuilder {
                     public void execute(@Nullable String s, @Nullable String s1, @Nullable AuthorizationException e) {
                         Map<String, String> map = new LinkedHashMap<>();
                         map.put("Authorization", String.format("Bearer %s", s));
-                        WebConnect.with(param.context, "userinfo")
+                        WebConnect.with(param.context, "")
                                 .get()
-                                .baseUrl("https://www.googleapis.com/oauth2/v3/")
+                                .baseUrl(param.url)
                                 .headerParam(map)
                                 .callback(new OnWebCallback() {
                                     @Override
@@ -133,7 +145,67 @@ public class RequestBuilder {
                                             callback.profile(new User());
                                         }
                                     }
-                                }, User.class, Object.class)
+                                }, Object.class, Object.class)
+                                .connect();
+
+                    }
+                });
+            }
+        }
+    }
+
+    public static class CustomInfo {
+        Param param;
+        ProfileListener callback;
+        private Class<?> success = Object.class;
+        private Class<?> error = Object.class;
+
+        CustomInfo(Param param) {
+            this.param = param;
+        }
+
+        public CustomInfo listener(ProfileListener l) {
+            callback = l;
+            return this;
+        }
+
+        public CustomInfo success(Class<?> Klass) {
+            this.success = Klass;
+            return this;
+        }
+
+        public CustomInfo error(Class<?> Klass) {
+            this.error = Klass;
+            return this;
+        }
+
+        public void build() {
+            AuthState authState = AuthManager.get().restoreAuthState(param.context);
+            if (authState != null) {
+                authState.performActionWithFreshTokens(new AuthorizationService(param.context), new AuthState.AuthStateAction() {
+                    @Override
+                    public void execute(@Nullable String s, @Nullable String s1, @Nullable AuthorizationException e) {
+                        Map<String, String> map = new LinkedHashMap<>();
+                        map.put("Authorization", String.format("Bearer %s", s));
+                        WebConnect.with(param.context, "")
+                                .get()
+                                .baseUrl(param.url)
+                                .headerParam(map)
+                                .callback(new OnWebCallback() {
+                                    @Override
+                                    public <T> void onSuccess(@Nullable T object, int taskId) {
+                                        if (callback != null) {
+                                            callback.profile(object);
+                                        }
+                                    }
+
+                                    @Override
+                                    public <T> void onError(@Nullable T object, String error, int taskId) {
+                                        if (callback != null) {
+                                            callback.profile(object);
+                                        }
+                                    }
+                                }, success, error)
                                 .connect();
 
                     }
